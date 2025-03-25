@@ -22,14 +22,14 @@ let
 in
 python.pkgs.buildPythonApplication rec {
   pname = "esphome";
-  version = "2024.12.2";
+  version = "2025.3.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = pname;
     repo = pname;
     tag = version;
-    hash = "sha256-VW9p3VNVJOw5vkjCU4fujG0ie4N2D2QLidBANPV512U=";
+    hash = "sha256-+KmWQPZok73DEs11C5wm5pQ6osy9SS9QNyaqBWsyulI=";
   };
 
   build-systems = with python.pkgs; [
@@ -72,9 +72,9 @@ python.pkgs.buildPythonApplication rec {
     colorama
     cryptography
     esphome-dashboard
+    esphome-glyphsets
     freetype-py
     icmplib
-    glyphsets
     kconfiglib
     packaging
     paho-mqtt
@@ -123,6 +123,12 @@ python.pkgs.buildPythonApplication rec {
     pytest-cov-stub
     pytest-mock
     pytestCheckHook
+  ];
+
+  disabledTests = [
+    # race condition, also visible in upstream tests
+    # tests/dashboard/test_web_server.py:78: IndexError
+    "test_devices_page"
   ];
 
   postCheck = ''

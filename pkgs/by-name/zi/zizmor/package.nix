@@ -1,27 +1,30 @@
 {
   lib,
   fetchFromGitHub,
+  nix-update-script,
   rustPlatform,
-  testers,
-  zizmor,
+  versionCheckHook,
 }:
 
 rustPlatform.buildRustPackage rec {
   pname = "zizmor";
-  version = "1.0.1";
+  version = "1.5.1";
 
   src = fetchFromGitHub {
     owner = "woodruffw";
     repo = "zizmor";
     tag = "v${version}";
-    hash = "sha256-1NpwBjJlpaP3iyTfrgMwO/1qR74/MNBYjtf4+wCe4m8=";
+    hash = "sha256-G0cayE8UDahLYZl2HG8315YYUOhH5u6L/VRWHqqavPk=";
   };
 
-  cargoHash = "sha256-feAfHkcLvEdFblehPGtLO01Vl9QpOueuJrpEujlv4qY=";
+  useFetchCargoVendor = true;
+  cargoHash = "sha256-CRjr4X525t7xaFsnX3gOy4+HJis5T8nw6zrhkW60Bpw=";
 
-  passthru.tests.version = testers.testVersion {
-    package = zizmor;
-  };
+  nativeInstallCheckInputs = [ versionCheckHook ];
+
+  doInstallCheck = true;
+
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Tool for finding security issues in GitHub Actions setups";

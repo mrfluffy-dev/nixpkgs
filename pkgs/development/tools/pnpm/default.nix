@@ -12,12 +12,12 @@ let
       hash = "sha256-2qJ6C1QbxjUyP/lsLe2ZVGf/n+bWn/ZwIVWKqa2dzDY=";
     };
     "9" = {
-      version = "9.15.3";
-      hash = "sha256-wdpDcnzLwe1Cr/T9a9tLHpHmWoGObv/1skD78HC6Tq8=";
+      version = "9.15.9";
+      hash = "sha256-z4anrXZEBjldQoam0J1zBxFyCsxtk+nc6ax6xNxKKKc=";
     };
     "10" = {
-      version = "10.0.0";
-      hash = "sha256-Q6v25yD7e8U8WRsIYmBcfTI9Cp0t0zvKwHsGLhPPSUg=";
+      version = "10.6.5";
+      hash = "sha256-R8i8pCtLSFNLWxso1XPFBnc5N7AvaOUpkvvYJpExxcg=";
     };
   };
 

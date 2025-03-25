@@ -8,12 +8,12 @@
 
 stdenv.mkDerivation rec {
   pname = "tt-rss";
-  version = "0-unstable-2024-12-22";
+  version = "0-unstable-2025-03-14";
 
   src = fetchgit {
     url = "https://git.tt-rss.org/fox/tt-rss.git";
-    rev = "fc89d2e6333d6d828f2b07a53be53677caf3d638";
-    hash = "sha256-z+sWplOExqtkWPEBJ+WOb4CPDX1iLj14KwrGSojFp0A=";
+    rev = "28cb97ddc5834ce8cfe24602a293b90348851495";
+    hash = "sha256-l4aGTxL9d+go9R7cn14XOoOr8JTrJSScgDIIHGvaB9Q=";
   };
 
   installPhase = ''

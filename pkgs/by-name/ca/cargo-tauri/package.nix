@@ -13,17 +13,17 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "tauri";
-  version = "2.2.2";
+  version = "2.3.1";
 
   src = fetchFromGitHub {
     owner = "tauri-apps";
     repo = "tauri";
-    tag = "tauri-v${version}";
-    hash = "sha256-agmY/39tkz71kCSksIyrbxDrvnOJpBSYCdygjd4rOBY=";
+    tag = "tauri-cli-v${version}";
+    hash = "sha256-EQ/df2fPhB4j6HcBjnwwSES8l65QU0VUjkMJfDBh5MA=";
   };
 
   useFetchCargoVendor = true;
-  cargoHash = "sha256-i4ACVFWVEs866kJHNE49fnFj87GZbJIg5p1J3eVLRwE=";
+  cargoHash = "sha256-d+d2QFZfGZ9n3wefxWaQC3ePmokAV5J5743jLYjfI2s=";
 
   nativeBuildInputs = [ pkg-config ];
 
@@ -48,7 +48,7 @@ rustPlatform.buildRustPackage rec {
     updateScript = nix-update-script {
       extraArgs = [
         "--version-regex"
-        "tauri-v(.*)"
+        "tauri-cli-v(.*)"
       ];
     };
   };
@@ -56,7 +56,7 @@ rustPlatform.buildRustPackage rec {
   meta = {
     description = "Build smaller, faster, and more secure desktop applications with a web frontend";
     homepage = "https://tauri.app/";
-    changelog = "https://github.com/tauri-apps/tauri/releases/tag/tauri-v${version}";
+    changelog = "https://github.com/tauri-apps/tauri/releases/tag/${src.tag}";
     license = with lib.licenses; [
       asl20 # or
       mit

@@ -9,6 +9,7 @@
   atk,
   cairo,
   cudatoolkit,
+  cudaPackages,
   ffmpeg,
   gdk-pixbuf,
   getopt,
@@ -34,13 +35,17 @@
   which,
   x264,
   x265,
+  libavif,
+  libspng,
+  openh264,
+  libyuv,
   xauth,
   xdg-utils,
   xorg,
   xorgserver,
   xxHash,
   clang,
-}:
+}@args:
 
 let
   inherit (python3.pkgs) cython buildPythonApplication;
@@ -73,16 +78,23 @@ let
         cp ${nv-codec-headers-10}/include/ffnvcodec/nvEncodeAPI.h $out/include
         substituteAll ${./nvenc.pc} $out/lib/pkgconfig/nvenc.pc
       '';
+
+  nvjpegHeaders = runCommand "nvjpeg-headers" { } ''
+    mkdir -p $out/include $out/lib/pkgconfig
+    substituteAll ${cudaPackages.libnvjpeg.dev}/share/pkgconfig/nvjpeg.pc $out/lib/pkgconfig/nvjpeg.pc
+  '';
 in
 buildPythonApplication rec {
   pname = "xpra";
-  version = "6.2.2";
+  version = "6.2.5";
+
+  stdenv = if withNvenc then cudaPackages.backendStdenv else args.stdenv;
 
   src = fetchFromGitHub {
     owner = "Xpra-org";
     repo = "xpra";
     rev = "v${version}";
-    hash = "sha256-YLz2Ex3gHabicPbGj5BFP1pwU/8K/bu4R7cWi1Fu2oM=";
+    hash = "sha256-XY8NZhWCRLjpgq0dOClzftvMR7g/X64b+OYyjOGC/lM=";
   };
 
   patches = [
@@ -124,6 +136,8 @@ buildPythonApplication rec {
     ]
     ++ (with gst_all_1; [
       gst-libav
+      gst-vaapi
+      gst-plugins-ugly
       gst-plugins-bad
       gst-plugins-base
       gst-plugins-good
@@ -146,9 +160,16 @@ buildPythonApplication rec {
       pango
       x264
       x265
+      libavif
+      libspng
+      openh264
+      libyuv
       xxHash
     ]
-    ++ lib.optional withNvenc nvencHeaders;
+    ++ lib.optional withNvenc [
+      nvencHeaders
+      nvjpegHeaders
+    ];
 
   propagatedBuildInputs =
     with python3.pkgs;
@@ -171,10 +192,14 @@ buildPythonApplication rec {
         pygobject3
         pyinotify
         pyopengl
+        pyopengl-accelerate
         python-uinput
         pyxdg
         rencode
         invoke
+        aioquic
+        uvloop
+        pyopenssl
       ]
       ++ lib.optionals withNvenc [
         pycuda
@@ -185,15 +210,20 @@ buildPythonApplication rec {
   # error: 'import_cairo' defined but not used
   env.NIX_CFLAGS_COMPILE = "-Wno-error=unused-function";
 
-  setupPyBuildFlags = [
-    "--with-Xdummy"
-    "--without-Xdummy_wrapper"
-    "--without-strict"
-    "--with-gtk3"
-    # Override these, setup.py checks for headers in /usr/* paths
-    "--with-pam"
-    "--with-vsock"
-  ] ++ lib.optional withNvenc "--with-nvenc";
+  setupPyBuildFlags =
+    [
+      "--with-Xdummy"
+      "--without-Xdummy_wrapper"
+      "--without-strict"
+      "--with-gtk3"
+      # Override these, setup.py checks for headers in /usr/* paths
+      "--with-pam"
+      "--with-vsock"
+    ]
+    ++ lib.optional withNvenc [
+      "--with-nvenc"
+      "--with-nvjpeg_encoder"
+    ];
 
   dontWrapGApps = true;
 
